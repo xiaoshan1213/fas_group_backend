@@ -70,11 +70,25 @@ session.query(AdminGroup).filter_by(customer_id=0)
 # session.query(AdminGroup).filter_by(customer_id=0, id=1)
 
 q1 = session.query(Admin, AdminGroup, AdminJoinGroup)\
-.with_entities(AdminGroup.name)\
+.with_entities(AdminGroup.id)\
 .filter(Admin.name == 'wenjin', Admin.customer_id == 0)\
 .filter(Admin.id == AdminJoinGroup.admin_id)\
 .filter(AdminJoinGroup.group_id == AdminGroup.id).all()
 # print q1
+
+# get all namespaces for current level admin user
+list1 = [value for (value,) in q1]
+print list1
+res = conn.execute(admintoresgroup.__table__.select().where(admintoresgroup.__table__.c.admingroup_id.in_(list1)))
+result = [r[1] for r in res]
+print result
+res = conn.execute(namespace.__table__.select().where(namespace.__table__.c.group_id.in_(result)))
+result = [r[1] for r in res]
+print result
+
+# if current level is global
+# direct query namespace of current customer_id for all namespaces
+session.query(Namespace).filter_by(customer_id=0).all()
 
 # create admin group
 adminGroup.__table__.insert().values(name='ns3', customer_id=0)
@@ -90,16 +104,22 @@ session.query(Namespace).filter_by(name='np1').update({'group_id' : 0})
 # session.commit()
 
 # link admin group with res group
-admintoresgroup.__table__.insert().values(admingroup_id=0, resgroup_id=0)
+ag1 = session.query(AdminGroup).filter_by(name='ns1').first()
+rg1 = session.query(ResGroup).filter_by(name='rg1').first()
+# rg1 = session.query(ResGroup).first()
+# conn.execute(admintoresgroup.__table__.insert().values(admingroup_id=ag1.id, resgroup_id=rg1.id))
 
-# get all namespaces for current level admin user
-q2 = session.query(Admin, AdminGroup, AdminJoinGroup, AdminToResGroup, ResGroup, Namespace)\
-.with_entities(Namespace.id, Namespace.name)\
-.filter(Admin.name == 'wenjin', Admin.customer_id == 0)\
-.filter(Admin.id == AdminJoinGroup.admin_id)\
-.filter(AdminJoinGroup.group_id == AdminGroup.id)\
-.filter(AdminGroup.id == AdminToResGroup.admingroup_id)\
-.filter(Namespace.group_id == AdminToResGroup.resgroup_id).all()
+ag2 = session.query(AdminGroup).filter_by(name='ns2').first()
+rg2 = session.query(ResGroup).filter_by(name='rg2').first()
+# conn.execute(admintoresgroup.__table__.insert().values(admingroup_id=ag2.id, resgroup_id=rg2.id))
+
+# print q2
+
+# log?
+
+# auth client (filter by namespace_id)
+
+# user (filter by namespace_id)
 
 print q2
 
