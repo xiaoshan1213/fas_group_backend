@@ -69,12 +69,12 @@ session.query(AdminGroup).filter_by(customer_id=0)
 # session.query(AdminJoinGroup).filter_by(admin_id=1)
 # session.query(AdminGroup).filter_by(customer_id=0, id=1)
 
-q = session.query(Admin, AdminGroup, AdminJoinGroup)\
+q1 = session.query(Admin, AdminGroup, AdminJoinGroup)\
 .with_entities(AdminGroup.name)\
 .filter(Admin.name == 'wenjin', Admin.customer_id == 0)\
 .filter(Admin.id == AdminJoinGroup.admin_id)\
 .filter(AdminJoinGroup.group_id == AdminGroup.id).all()
-print q
+# print q1
 
 # create admin group
 adminGroup.__table__.insert().values(name='ns3', customer_id=0)
@@ -86,14 +86,22 @@ resGroup.__table__.insert().values(name='rg3', customer_id=0)
 adminJoinGroup.__table__.insert().values(admin_id='', group_id='')
 
 # assign namespaces to that res group (namespace already exists)
-session.query(Namespace).filter_by(name='np1').first().update({'group_id' : 'res_group_id'})
-session.commit()
+session.query(Namespace).filter_by(name='np1').update({'group_id' : 0})
+# session.commit()
 
 # link admin group with res group
-admintoresgroup.__table__.insert().values(admingroup_id='', resgroup_id='')
+admintoresgroup.__table__.insert().values(admingroup_id=0, resgroup_id=0)
 
 # get all namespaces for current level admin user
+q2 = session.query(Admin, AdminGroup, AdminJoinGroup, AdminToResGroup, ResGroup, Namespace)\
+.with_entities(Namespace.id, Namespace.name)\
+.filter(Admin.name == 'wenjin', Admin.customer_id == 0)\
+.filter(Admin.id == AdminJoinGroup.admin_id)\
+.filter(AdminJoinGroup.group_id == AdminGroup.id)\
+.filter(AdminGroup.id == AdminToResGroup.admingroup_id)\
+.filter(Namespace.group_id == AdminToResGroup.resgroup_id).all()
 
+print q2
 
 
 # print session.query(Admin).filter_by(name='sam').first()

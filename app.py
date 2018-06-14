@@ -29,16 +29,17 @@ class Namespace(Base):
     customer_id = Column(Float, nullable=False)
     group_id = Column(Float, nullable=True)
 
+class AdminToResGroup(Base):
+    __tablename__ = 'admintores'
+    admingroup_id = Column(ForeignKey('admingroups.id', ondelete='CASCADE'), nullable=False, primary_key=True)
+    resgroup_id = Column(ForeignKey('resgroups.id', ondelete='CASCADE'), nullable=False, primary_key=False)
+
 class ResGroup(Base):
     __tablename__ = 'resgroups'
     id = Column(Integer, primary_key=True, default=0, autoincrement=True)
     name = Column(String(36), nullable=False)
     customer_id = Column(Float, nullable=False)
 
-class AdminToResGroup(Base):
-    __tablename__ = 'admintoresgroups'
-    admingroup_id = Column(ForeignKey('admingroups.id', ondelete='CASCADE'), nullable=False, primary_key=True)
-    resgroup_id = Column(ForeignKey('resgroups.id', ondelete='CASCADE'), nullable=False, primary_key=False)
 
 
 # AdminJoinGroup.__table__.drop(engine)
