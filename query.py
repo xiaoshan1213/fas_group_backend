@@ -97,15 +97,18 @@ adminGroup.__table__.insert().values(name='ns3', customer_id=0)
 resGroup.__table__.insert().values(name='rg3', customer_id=0)
 
 # assgin admin users to that admin group
-adminJoinGroup.__table__.insert().values(admin_id='', group_id='')
+a1 = session.query(Admin).filter_by(name='wenjin', customer_id=0).first()
+ag1 = session.query(AdminGroup).filter_by(name='ns3', customer_id=0).first()
+# conn.execute(adminJoinGroup.__table__.insert().values(admin_id=a1.id, group_id=ag1.id))
 
 # assign namespaces to that res group (namespace already exists)
-session.query(Namespace).filter_by(name='np1').update({'group_id' : 0})
+rg1 = session.query(ResGroup).with_entities(ResGroup.id).filter_by(name='rg3').first()
+session.query(Namespace).filter_by(name='np4').update({'group_id' : rg1[0]})
 # session.commit()
 
 # link admin group with res group
-ag1 = session.query(AdminGroup).filter_by(name='ns1').first()
-rg1 = session.query(ResGroup).filter_by(name='rg1').first()
+ag1 = session.query(AdminGroup).filter_by(name='ns3', customer_id=0).first()
+rg1 = session.query(ResGroup).filter_by(name='rg3', customer_id=0).first()
 # rg1 = session.query(ResGroup).first()
 # conn.execute(admintoresgroup.__table__.insert().values(admingroup_id=ag1.id, resgroup_id=rg1.id))
 
@@ -121,7 +124,7 @@ rg2 = session.query(ResGroup).filter_by(name='rg2').first()
 
 # user (filter by namespace_id)
 
-print q2
+# print q2
 
 
 # print session.query(Admin).filter_by(name='sam').first()

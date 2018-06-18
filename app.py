@@ -27,7 +27,7 @@ class Namespace(Base):
     id = Column(Integer, primary_key=True, default=0, autoincrement=True)
     name = Column(String(36), nullable=False)
     customer_id = Column(Float, nullable=False)
-    group_id = Column(Float, nullable=True)
+    group_id = Column(ForeignKey('resgroups.id'), nullable=True)
 
 class AdminToResGroup(Base):
     __tablename__ = 'admintores'
@@ -45,6 +45,8 @@ class ResGroup(Base):
 # AdminJoinGroup.__table__.drop(engine)
 # Base.metadata.create_all(engine)
 # AdminJoinGroup.__table__.create(engine)
+# Namespace.__table__.drop(engine)
+# Namespace.__table__.create(engine)
 # Namespace.__table__.create(engine)
 # ResGroup.__table__.create(engine)
 # AdminToResGroup.__table__.create(engine)
